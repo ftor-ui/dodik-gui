@@ -1,0 +1,27 @@
+#include <windows.h>
+#include "resource.h"
+
+IDI_ICON ICON "icon.ico"
+
+IDB_BACKGROUND BITMAP "background.bmp"
+IDB_HELP BITMAP "help.bmp"
+IDB_START BITMAP "start.bmp"
+IDB_STOP BITMAP "stop.bmp"
+
+IDB_IMAGE1 BITMAP "image1.bmp"
+IDB_IMAGE2 BITMAP "image2.bmp"
+IDB_IMAGE3 BITMAP "image3.bmp"
+IDB_IMAGE4 BITMAP "image4.bmp"
+IDB_IMAGE5 BITMAP "image5.bmp"
+IDB_IMAGE6 BITMAP "image6.bmp"
+IDB_IMAGE7 BITMAP "image7.bmp"
+IDB_IMAGE8 BITMAP "image8.bmp"
+IDB_IMAGE9 BITMAP "image9.bmp"
+IDB_IMAGE10 BITMAP "image10.bmp"
+IDB_IMAGE11 BITMAP "image11.bmp"
+IDB_IMAGE12 BITMAP "image12.bmp"
+IDB_IMAGE13 BITMAP "image13.bmp"
+IDB_IMAGE14 BITMAP "image14.bmp"
+IDB_IMAGE15 BITMAP "image15.bmp"
+IDB_IMAGE16 BITMAP "image16.bmp"
+IDB_IMAGE17 BITMAP "image17.bmp"

@@ -1,0 +1,23 @@
+#define IDI_ICON 99
+#define IDB_BACKGROUND 100
+#define IDB_HELP 101
+#define IDB_START 102
+#define IDB_STOP 103
+
+#define IDB_IMAGE1 201
+#define IDB_IMAGE2 202
+#define IDB_IMAGE3 203
+#define IDB_IMAGE4 204
+#define IDB_IMAGE5 205
+#define IDB_IMAGE6 206
+#define IDB_IMAGE7 207
+#define IDB_IMAGE8 208
+#define IDB_IMAGE9 209
+#define IDB_IMAGE10 210
+#define IDB_IMAGE11 211
+#define IDB_IMAGE12 212
+#define IDB_IMAGE13 213
+#define IDB_IMAGE14 214
+#define IDB_IMAGE15 215
+#define IDB_IMAGE16 216
+#define IDB_IMAGE17 217
