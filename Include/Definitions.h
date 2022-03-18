@@ -58,7 +58,8 @@ struct data {
 	TCHAR method[1024];
 	FILE *proxy;
 	int timeout;
-	int wait;
+	int count_threads;
+	int ready_threads;
 	int status;
 };
 typedef struct data data;

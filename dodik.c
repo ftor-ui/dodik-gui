@@ -97,7 +97,8 @@ long long int __stdcall WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		}
 		case WM_CREATE:
 		{
-			dataArgs.wait = 1;
+			dataArgs.ready_threads = 0;
+			dataArgs.count_threads = iThreads;
 			dataArgs.status = 1;
 			InitWidgets(hWnd);
 			break;
@@ -213,8 +214,9 @@ void* ThreadSend(void *args)
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunction);
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 
-	while ( ((data *) args)->wait )
-		Sleep(1000);
+	((data *) args)->ready_threads++;
+	while ( ((data *) args)->ready_threads != ((data *) args)->count_threads )
+		Sleep(5000);
 
 	int i = 1;
 	while ( ((data *) args)->status ) {
@@ -319,11 +321,11 @@ void ButtonLaunch(HWND hWnd)
 void StartThreads()
 {
 	bStarting = 1;
+	dataArgs.ready_threads = 0;
+	dataArgs.count_threads = iThreads;
 
 	for (int i = 0; i < iThreads; i++)
-		pthread_create(hThreads + i, NULL, ThreadSend, (void *) &dataArgs);
-
-	dataArgs.wait = 0;
+		if (pthread_create(hThreads + i, NULL, ThreadSend, (void *) &dataArgs)) dataArgs.count_threads--;
 }
 
 void StopThreads()
@@ -331,10 +333,8 @@ void StopThreads()
 	bStarting = 0;
 	dataArgs.status = 0;
 
-	for (int i = 0; i < iThreads; i++) {
+	for (int i = 0; i < iThreads; i++)
 		pthread_join(hThreads[i], NULL);
-	}
 
 	dataArgs.status = 1;
-	dataArgs.wait = 1;
 }
