@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <curl/curl.h>
+#include <pthread.h>
 #include <windows.h>
 #include <tchar.h>
 #include <commctrl.h>
@@ -96,6 +97,8 @@ long long int __stdcall WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		}
 		case WM_CREATE:
 		{
+			dataArgs.wait = 1;
+			dataArgs.status = 1;
 			InitWidgets(hWnd);
 			break;
 		}
@@ -178,7 +181,7 @@ size_t writefunction(char *buffer, size_t size, size_t nitem, void *n)
 	return 0;
 }
 
-void ThreadSend(void *args)
+void* ThreadSend(void *args)
 {
 	TCHAR *buffer[128] = {0};
 	
@@ -210,8 +213,11 @@ void ThreadSend(void *args)
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunction);
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 
+	while ( ((data *) args)->wait )
+		Sleep(1000);
+
 	int i = 1;
-	while (1) {
+	while ( ((data *) args)->status ) {
 		curl_easy_perform(curl);
 		if (strcmp(method, _T("random")) == 0)
 			
@@ -225,6 +231,10 @@ void ThreadSend(void *args)
 		}
 		i++;
 	}
+
+	curl_easy_cleanup(curl);
+
+	return NULL;
 }
 
 void ButtonLaunch(HWND hWnd)
@@ -234,7 +244,6 @@ void ButtonLaunch(HWND hWnd)
 		free(hThreads);
 		if (dataArgs.proxy)
 			fclose(dataArgs.proxy);
-		bStarting = 0;
 
 		EnableWindow(hwndHost, TRUE);
 		EnableWindow(hwndPort, TRUE);
@@ -286,14 +295,13 @@ void ButtonLaunch(HWND hWnd)
 
 	if (!GetWindowText(hwndThreads, buff, 1024)) {
 		iThreads = 1;
-		hThreads = (HANDLE *) malloc(sizeof(HANDLE));
+		hThreads = (pthread_t *) malloc(sizeof(HANDLE));
 	}
 	else {
 		iThreads = atoi(buff);
-		hThreads = (HANDLE *) malloc(sizeof(HANDLE) * iThreads);
+		hThreads = (pthread_t *) malloc(sizeof(HANDLE) * iThreads);
 	}
 
-	bStarting = 1;
 	StartThreads();
 
 	EnableWindow(hwndHost, FALSE);
@@ -310,14 +318,23 @@ void ButtonLaunch(HWND hWnd)
 
 void StartThreads()
 {
+	bStarting = 1;
+
 	for (int i = 0; i < iThreads; i++)
-		hThreads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) ThreadSend, (LPVOID) &dataArgs, 0, NULL); 	
+		pthread_create(hThreads + i, NULL, ThreadSend, (void *) &dataArgs);
+
+	dataArgs.wait = 0;
 }
 
 void StopThreads()
 {
+	bStarting = 0;
+	dataArgs.status = 0;
+
 	for (int i = 0; i < iThreads; i++) {
-		TerminateThread(hThreads[i], 0);
-		CloseHandle(hThreads[i]);
+		pthread_join(hThreads[i], NULL);
 	}
+
+	dataArgs.status = 1;
+	dataArgs.wait = 1;
 }
