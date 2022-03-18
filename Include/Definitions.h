@@ -46,7 +46,7 @@ HWND hwndLaunchPrompt = NULL;
 //                      //
 //----------------------//
 
-void ThreadSend(void *);
+void *ThreadSend(void *);
 size_t writefunction(char *, size_t, size_t, void *);
 void ButtonLaunch(HWND);
 void StartThreads();
