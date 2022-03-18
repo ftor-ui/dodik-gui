@@ -58,10 +58,12 @@ struct data {
 	TCHAR method[1024];
 	FILE *proxy;
 	int timeout;
+	int wait;
+	int status;
 };
 typedef struct data data;
 
 data dataArgs = {0};
-HANDLE *hThreads = NULL;
+pthread_t *hThreads = NULL;
 int iThreads = 1;
 BOOLEAN bStarting = 0;
